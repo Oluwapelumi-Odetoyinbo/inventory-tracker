@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2 } from "lucide-react"
+import { Loader2, LogIn } from "lucide-react"
+import Link from "next/link"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -31,6 +32,21 @@ export default function LoginPage() {
       router.push("/dashboard")
     } catch (err: any) {
       setError(err.message || "Login failed")
+      console.error("Login error:", err)
+
+      let errorMessage = "Login failed. Please try again."
+
+      if (err.status === 401) {
+        errorMessage = "Invalid email or password"
+      } else if (err.status === 404) {
+        errorMessage = "Account not found. Please check your email or sign up."
+      } else if (err.status === 500) {
+        errorMessage = "Server error. Please try again later."
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+
+      setError(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -40,7 +56,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Admin Login</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl flex items-center justify-center gap-2">
+            <LogIn className="h-6 w-6" />
+            Admin Login
+          </CardTitle>
           <CardDescription>Sign in to access your inventory management system</CardDescription>
         </CardHeader>
         <CardContent>
@@ -60,6 +79,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                placeholder="Enter your email"
               />
             </div>
 
@@ -72,6 +92,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                placeholder="Enter your password"
               />
             </div>
 
@@ -80,6 +101,15 @@ export default function LoginPage() {
               Sign In
             </Button>
           </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Link href="/signup" className="font-medium text-primary hover:underline">
+                Create one here
+              </Link>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

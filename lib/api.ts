@@ -60,5 +60,11 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
+    register: (name: string, email: string, password: string) =>
+    apiRequest<{ token: string; user: any }>("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    }),
+    
   getMonthlyProfit: () => apiRequest<any>("/api/orders/profit/monthly"),
 }
