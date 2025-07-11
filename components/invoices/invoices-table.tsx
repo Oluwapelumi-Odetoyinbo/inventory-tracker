@@ -17,6 +17,7 @@ interface Invoice {
     email: string
   }
   status: string
+  paymentStatus: string
   issuedAt: string
   total: number
   orderId: string
@@ -160,10 +161,12 @@ export function InvoicesTable({ refreshTrigger }: InvoicesTableProps) {
     switch (status.toLowerCase()) {
       case "paid":
         return "default"
-      case "pending":
+      case "unpaid":
         return "secondary"
       case "overdue":
         return "destructive"
+      case "pending":
+        return "secondary"
       default:
         return "outline"
     }
@@ -249,7 +252,7 @@ export function InvoicesTable({ refreshTrigger }: InvoicesTableProps) {
                       </div>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      <Badge variant={getStatusBadgeVariant(invoice.status)}>{invoice.status}</Badge>
+                      <Badge variant={getStatusBadgeVariant(invoice.paymentStatus)}>{invoice.paymentStatus}</Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{formatDate(invoice.issuedAt)}</TableCell>
                     <TableCell className="font-medium">{formatCurrency(invoice.total)}</TableCell>
