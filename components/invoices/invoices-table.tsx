@@ -17,8 +17,8 @@ interface Invoice {
     email: string
   }
   status: string
-  issuedDate: string
-  totalAmount: number
+  issuedAt: string
+  total: number
   orderId: string
 }
 
@@ -251,8 +251,8 @@ export function InvoicesTable({ refreshTrigger }: InvoicesTableProps) {
                     <TableCell className="hidden sm:table-cell">
                       <Badge variant={getStatusBadgeVariant(invoice.status)}>{invoice.status}</Badge>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell">{formatDate(invoice.issuedDate)}</TableCell>
-                    <TableCell className="font-medium">{formatCurrency(invoice.totalAmount)}</TableCell>
+                    <TableCell className="hidden md:table-cell">{formatDate(invoice.issuedAt)}</TableCell>
+                    <TableCell className="font-medium">{formatCurrency(invoice.total)}</TableCell>
                     <TableCell className="text-right">
                       <Button
                         onClick={() => downloadInvoice(invoice._id, invoice.invoiceNumber)}
