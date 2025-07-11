@@ -1,21 +1,21 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 class ApiError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message)
-    this.name = "ApiError"
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = "ApiError";
   }
 }
 
-type InventoryItem = {}
+type InventoryItem = {};
 
-type Order = {}
+type Order = {};
 
-async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const token = localStorage.getItem("token")
+async function apiRequest<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const token = localStorage.getItem("token");
 
   const config: RequestInit = {
     headers: {
@@ -24,16 +24,19 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
       ...options.headers,
     },
     ...options,
-  }
+  };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config)
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
-    throw new ApiError(response.status, errorData.message || "An error occurred")
+    const errorData = await response.json().catch(() => ({}));
+    throw new ApiError(
+      response.status,
+      errorData.message || "An error occurred"
+    );
   }
 
-  return response.json()
+  return response.json();
 }
 
 export const api = {
@@ -60,11 +63,19 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-    register: (name: string, email: string, password: string) =>
+  register: (name: string, email: string, password: string) =>
     apiRequest<{ token: string; user: any }>("/api/auth/register", {
       method: "POST",
       body: JSON.stringify({ name, email, password }),
     }),
-    
+
   getMonthlyProfit: () => apiRequest<any>("/api/orders/profit/monthly"),
-}
+  getInvoiceByNumber: (invoiceNumber: string) =>
+    apiRequest<any>(`/invoices/${invoiceNumber}`),
+
+  markInvoiceAsPaid: (invoiceNumber: string, paymentData: any) =>
+    apiRequest<any>(`/api/invoices/pay/${invoiceNumber}`, {
+      method: "POST",
+      body: JSON.stringify(paymentData),
+    }),
+};
